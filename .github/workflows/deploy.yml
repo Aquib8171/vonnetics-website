@@ -14,22 +14,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Files ko Ubuntu server par securely copy karna (Alternative Stable Action)
+      # 2. Files ko Ubuntu server par securely copy karna (Direct Variable Sync)
       - name: Deploy to EC2 via SCP
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
+          username: ubuntu             # Yahan direct 'ubuntu' likh dein taaki khali jaane ka sawal hi na rahe
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "./*"              # Poora code uthayega
-          target: "/var/www/html"     # Nginx folder me daalega
+          source: "./*"
+          target: "/var/www/html"
 
       # 3. Nginx Server ko automatically reload karna
       - name: Reload Nginx Server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
+          username: ubuntu             # Yahan bhi direct 'ubuntu' likh dein
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             sudo systemctl reload nginx
