@@ -10,21 +10,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Repository se code fetch karna
+      # 1. GitHub Repository se code fetch karna
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Files ko Ubuntu server par copy karna (Small letters me fix kiya hai yahan)
-      - name: Deploy to EC2 via SSH rsync
-        uses: easingthemes/ssh-deploy@main
+      # 2. Files ko Ubuntu server par securely copy karna (Alternative Stable Action)
+      - name: Deploy to EC2 via SCP
+        uses: appleboy/scp-action@master
         with:
-          ssh_private_key: ${{ secrets.EC2_SSH_KEY }}
-          remote_host: ${{ secrets.EC2_HOST }}
-          remote_user: ${{ secrets.EC2_USERNAME }}
-          target: /var/www/html/
-          args: "-rlgoDzvO --delete"
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "./*"              # Poora code uthayega
+          target: "/var/www/html"     # Nginx folder me daalega
 
-      # 3. Nginx Server ko automatically reload karna taaki naye changes dikhein
+      # 3. Nginx Server ko automatically reload karna
       - name: Reload Nginx Server
         uses: appleboy/ssh-action@master
         with:
