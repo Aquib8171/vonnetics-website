@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      # AWS ECR Registry me login karne ke liye
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 107758684227.dkr.ecr.ap-south-1.amazonaws.com
+      # Apni Image ka naam set karein (Jo aapne pehle setting me rakha tha)
+      - ImageName="simple-docker-service-0adaae80ab7b"
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $ImageName -f ./Dockerfile .
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Tagging the Docker image...
+      - docker tag $ImageName:latest 107758684227.dkr.ecr.ap-south-1.amazonaws.com/$ImageName:latest
+      - echo Pushing the Docker image...
+      - docker push 107758684227.dkr.ecr.ap-south-1.amazonaws.com/$ImageName:latest
